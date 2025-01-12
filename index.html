@@ -45,7 +45,7 @@
         }
 
         .wrapper a {
-            font-size: 10vw;
+            font-size: 8vw;
             /* Sử dụng vw để font chữ thay đổi theo chiều rộng màn hình */
             text-decoration: none;
             text-transform: uppercase;
@@ -92,7 +92,10 @@
         canvas.height = window.innerHeight;
 
         const particles = [];
-        const heartScale = 10; // Kích thước trái tim
+        // Nếu màn hình nhỏ thì kích thước là 10, ngược lại là 20
+        const heartScale = window.innerWidth < 768 ? 10 : 18;
+
+        // const heartScale = 10;
         const centerX = canvas.width / 2; // Căn giữa theo trục X
         const centerY = canvas.height / 2; // Căn giữa theo trục Y
 
