@@ -5,11 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heart Animation with Text</title>
-    <!-- Thêm link tới Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             overflow: hidden;
@@ -20,13 +23,15 @@
             height: 100vh;
             font-family: 'Poppins', sans-serif;
             position: relative;
-            /* Quan trọng để căn giữa */
         }
 
         canvas {
             display: block;
             position: absolute;
-            /* Đảm bảo canvas không ảnh hưởng đến phần tử văn bản */
+            top: 0;
+            left: 0;
+            z-index: 0;
+            /* Đảm bảo canvas ở dưới cùng */
         }
 
         .wrapper {
@@ -34,29 +39,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-weight: bold;
-            font-size: 30px;
-            /* Giảm kích thước font chữ */
-            color: white;
             text-align: center;
-            z-index: 10;
+            z-index: 1;
+            color: white;
         }
 
-        .text {
-            font-family: 'Poppins', sans-serif;
-            font-weight: bold;
-            font-size: 30px;
-            /* Giảm kích thước font chữ */
-            color: white;
-            text-align: center;
-        }
-
-        /* Đảm bảo rằng liên kết trong .wrapper có hiệu ứng hover đẹp */
         .wrapper a {
-            font-size: 3em;
-            /* Giảm kích thước font chữ trong liên kết */
+            font-size: 10vw;
+            /* Sử dụng vw để font chữ thay đổi theo chiều rộng màn hình */
             text-decoration: none;
-            text-align: center;
             text-transform: uppercase;
             line-height: 1;
             color: transparent;
@@ -69,13 +60,28 @@
             text-shadow: 4px 4px 0 #fff;
             transform: translate(-2px, -2px);
         }
+
+        /* Tối ưu hóa cho màn hình di động */
+        @media (max-width: 768px) {
+            .wrapper a {
+                font-size: 6vw;
+                /* Font lớn hơn cho màn hình nhỏ */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .wrapper a {
+                font-size: 8vw;
+                /* Font còn lớn hơn cho màn hình nhỏ nhất */
+            }
+        }
     </style>
 </head>
 
 <body>
     <canvas id="heartCanvas"></canvas>
 
-    <div class="wrapper" style="margin-top: 20px;">
+    <div class="wrapper">
         <a href="#">Trinh</a>
     </div>
 
@@ -86,7 +92,7 @@
         canvas.height = window.innerHeight;
 
         const particles = [];
-        const heartScale = 15; // Kích thước trái tim
+        const heartScale = 10; // Kích thước trái tim
         const centerX = canvas.width / 2; // Căn giữa theo trục X
         const centerY = canvas.height / 2; // Căn giữa theo trục Y
 
