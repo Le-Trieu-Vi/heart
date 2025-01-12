@@ -4,133 +4,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Animation</title>
+    <title>Heart Animation with Text</title>
+    <!-- Thêm link tới Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
     <style>
         body {
             margin: 0;
+            overflow: hidden;
+            background: radial-gradient(circle, #ff007f, #000);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            overflow: hidden;
-        }
-
-        .heart {
+            font-family: 'Poppins', sans-serif;
             position: relative;
-            width: 100px;
-            height: 100px;
-            background-color: #ff4d6d;
-            transform: rotate(-45deg);
-            animation: pulse 1.5s infinite;
+            /* Quan trọng để căn giữa */
         }
 
-        .heart::before,
-        .heart::after {
-            content: '';
+        canvas {
+            display: block;
             position: absolute;
-            width: 100px;
-            height: 100px;
-            background-color: #ff4d6d;
-            border-radius: 50%;
-            top: -50px;
-            left: 0;
+            /* Đảm bảo canvas không ảnh hưởng đến phần tử văn bản */
         }
 
-        .heart::after {
-            top: 0;
-            left: 50px;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1) rotate(-45deg);
-            }
-
-            50% {
-                transform: scale(1.1) rotate(-45deg);
-            }
-        }
-
-        .particles {
+        .wrapper {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 30px;
+            /* Giảm kích thước font chữ */
+            color: white;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: bold;
+            font-size: 30px;
+            /* Giảm kích thước font chữ */
+            color: white;
+            text-align: center;
+        }
+
+        /* Đảm bảo rằng liên kết trong .wrapper có hiệu ứng hover đẹp */
+        .wrapper a {
+            font-size: 3em;
+            /* Giảm kích thước font chữ trong liên kết */
+            text-decoration: none;
+            text-align: center;
+            text-transform: uppercase;
+            line-height: 1;
+            color: transparent;
+            -webkit-text-stroke: 1.5px yellow;
+            text-shadow: 0 0 0 #fff;
+            transition: all 250ms;
+        }
+
+        .wrapper a:hover {
+            text-shadow: 4px 4px 0 #fff;
+            transform: translate(-2px, -2px);
         }
     </style>
 </head>
 
 <body>
-    <div class="heart"></div>
-    <canvas class="particles"></canvas>
+    <canvas id="heartCanvas"></canvas>
+
+    <div class="wrapper" style="margin-top: 20px;">
+        <a href="#">Trinh</a>
+    </div>
 
     <script>
-        const canvas = document.querySelector('.particles');
+        const canvas = document.getElementById('heartCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        let particlesArray = [];
+        const particles = [];
+        const heartScale = 15; // Kích thước trái tim
+        const centerX = canvas.width / 2; // Căn giữa theo trục X
+        const centerY = canvas.height / 2; // Căn giữa theo trục Y
+
+        const heart = (t) => {
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = -(
+                13 * Math.cos(t) -
+                5 * Math.cos(2 * t) -
+                2 * Math.cos(3 * t) -
+                Math.cos(4 * t)
+            );
+            return { x, y };
+        };
 
         class Particle {
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.size = Math.random() * 5 + 1;
-                this.speedX = Math.random() * 3 - 1.5;
-                this.speedY = Math.random() * 3 - 1.5;
-                this.color = `rgba(255, 77, 109, ${Math.random()})`;
+                this.size = Math.random() * 3 + 1; // Kích thước ngẫu nhiên
+                this.speedX = Math.random() * 2 - 1; // Di chuyển theo X
+                this.speedY = Math.random() * 2 - 1; // Di chuyển theo Y
+                this.opacity = 1;
+                this.color = `hsl(${Math.random() * 360}, 100%, 60%)`; // Màu sắc ngẫu nhiên lung linh
             }
-
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-                if (this.size > 0.2) this.size -= 0.1;
+                this.opacity -= 0.02; // Dần biến mất
             }
-
             draw() {
+                ctx.globalAlpha = this.opacity;
                 ctx.fillStyle = this.color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
+                ctx.globalAlpha = 1;
             }
         }
 
-        function handleParticles() {
-            particlesArray.forEach((particle, index) => {
-                particle.update();
-                particle.draw();
-                if (particle.size <= 0.2) {
-                    particlesArray.splice(index, 1);
-                }
-            });
-        }
-
-        function createParticles(event) {
-            for (let i = 0; i < 10; i++) {
-                particlesArray.push(new Particle(event.x, event.y));
+        function generateParticles() {
+            for (let i = 0; i < 50; i++) {
+                const angle = Math.random() * Math.PI * 2; // Góc ngẫu nhiên
+                const distance = Math.random() * 10 + 10; // Khoảng cách ngẫu nhiên
+                const position = heart(angle);
+                const x = centerX + position.x * heartScale + Math.random() * distance;
+                const y = centerY + position.y * heartScale + Math.random() * distance;
+                particles.push(new Particle(x, y));
             }
         }
-
-        window.addEventListener('mousemove', createParticles);
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            handleParticles();
+
+            // Vẽ các hạt
+            particles.forEach((particle, index) => {
+                if (particle.opacity <= 0) {
+                    particles.splice(index, 1);
+                } else {
+                    particle.update();
+                    particle.draw();
+                }
+            });
+
+            // Tạo hạt mới
+            generateParticles();
             requestAnimationFrame(animate);
         }
-
-        animate();
 
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
+
+        animate();
     </script>
 </body>
 
