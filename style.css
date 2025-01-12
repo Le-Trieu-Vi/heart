@@ -33,10 +33,6 @@ a {
     transition: all 250ms;
 }
 
-a:hover {
-    text-shadow: 4px 4px 0 #fff;
-    transform: translate(-2px, -2px)
-}
 
 body {
     margin: 0;
@@ -60,13 +56,6 @@ body {
     /* Vàng nhạt */
     text-shadow: 0 0 0 #fff;
     transition: all 250ms;
-}
-
-.wrapper a:hover {
-    text-shadow: 4px 4px 0 #fff;
-    transform: translate(-2px, -2px);
-    color: #FFEB3B;
-    /* Vàng khi hover */
 }
 
 .text {
